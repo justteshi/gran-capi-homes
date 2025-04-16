@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success text-center shadow p-4 rounded">
+        <h2 class="mb-3">🎉 Guest Info Submitted</h2>
+        <p class="lead">
+            Thanks! Guest information for reservation <strong class="text-primary">{{ reservation.code }}</strong> was saved successfully.
+        </p>
+        <a href="/" class="btn btn-outline-primary mt-3">Go to Homepage</a>
+    </div>
+</div>
+{% endblock %}

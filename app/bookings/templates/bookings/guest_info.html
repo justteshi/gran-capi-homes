@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load bootstrap_filters %}
+
+{% block content %}
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-6">
+      <img class="card-img-top" style="height:360px; object-fit:cover;" src="https://a0.muscache.com/im/pictures/miso/Hosting-1071602242523143809/original/996edc9e-4149-41cb-a0bd-5686e17f6cbf.jpeg?im_w=720" alt="Card image cap">
+    </div>
+    <div class="col-md-6">
+      <div class="card-body m-4">
+        <h3 class="card-title">{{ reservation.apartment.title }}</h3>
+        <p class="card-text" style="display:flex; justify-content:space-between;margin-bottom: 0;">
+            <span>Reservation</span>
+            <span style="font-weight: bold;">{{ reservation.code }}</span>
+        </p>
+        <hr style="margin-top:0;">
+        <p class="card-text" style="display:flex; justify-content:space-between;margin-bottom: 0;">
+            <span>Checkin</span>
+            <span style="font-weight: bold;">{{ reservation.check_in|date:"M d, Y" }}</span>
+        </p>
+        <hr style="margin-top:0;">
+        <p class="card-text" style="display:flex; justify-content:space-between;margin-bottom: 0;">
+            <span>Checkout</span>
+            <span style="font-weight: bold;">{{ reservation.check_out|date:"M d, Y" }}</span>
+        </p>
+        <hr style="margin-top:0;">
+        <p class="card-text"><small class="text-muted">Number of guests: {{ reservation.number_of_guests }}</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <div class="formset">
+        {% for form in formset %}
+            <div class="card mb-4">
+                <h5 class="card-header">Guest {{ forloop.counter }}</h5>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for field in form %}
+                            <div class="col-md-6">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field|add_class:"form-control"|add_error_class:field.errors }}
+                                {% if field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in field.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}
