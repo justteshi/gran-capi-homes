@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django_countries.widgets import CountrySelectWidget
+from django.utils.safestring import mark_safe
 from .models import Guest
 
 class GuestInfoForm(forms.ModelForm):
@@ -20,7 +21,6 @@ class GuestInfoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         for field_name, field in self.fields.items():
-            # Use form-select for <select> fields, form-control for others
             if isinstance(field.widget, forms.Select):
                 field.widget.attrs['class'] = 'form-select'
             else:
@@ -29,16 +29,6 @@ class GuestInfoForm(forms.ModelForm):
             field.widget.attrs['id'] = f'id_{field_name}'
             field.required = True
 
-            # Add 'is-invalid' class if there are any errors
-            if field.errors:
-                classes = field.widget.attrs.get('class', '').split()
-                if 'form-control' not in classes:
-                    classes.append('form-control')  # Ensure form-control is present
-                if 'is-invalid' not in classes:
-                    classes.append('is-invalid')  # Add is-invalid if errors
-                field.widget.attrs['class'] = ' '.join(classes)
-
-    # Optional: custom validation example
     def clean_identity_number(self):
         identity_number = self.cleaned_data.get('identity_number')
         if not identity_number.isalnum():
@@ -51,31 +41,10 @@ class GuestInfoForm(forms.ModelForm):
             raise forms.ValidationError("Document number must be at least 5 characters.")
         return doc_number
 
-
-    # Field-level validation for 'full_name'
-    # def clean_full_name(self):
-    #     full_name = self.cleaned_data.get('full_name')
-    #
-    #     # Ensure that full name is not empty
-    #     if not full_name:
-    #         raise ValidationError('Full name is required.')
-    #
-    #     # Optionally, you could add more validation for the name format, e.g., no numbers allowed
-    #     if any(char.isdigit() for char in full_name):
-    #         raise ValidationError('Full name should not contain numbers.')
-    #
-    #     return full_name
-    #
-    # # Field-level validation for 'email'
-    # def clean_email(self):
-    #     email = self.cleaned_data.get('email')
-    #
-    #     # Ensure that email is not empty (though this is checked by the EmailField)
-    #     if not email:
-    #         raise ValidationError('Email is required.')
-    #
-    #     # You can add additional custom checks if needed
-    #     if email and '@' not in email:
-    #         raise ValidationError('Please enter a valid email address.')
-    #
-    #     return email
+class TermsAgreementForm(forms.Form):
+    terms_agreed = forms.BooleanField(
+        required=True,
+        label=mark_safe(
+            "I agree to the <a href='#' data-bs-toggle='modal' data-bs-target='#termsModal'>Terms and Conditions and Privacy Policy</a>"),
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'})
+    )

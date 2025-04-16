@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django_countries.fields import CountryField
+from tinymce.models import HTMLField
 import uuid
 
 class Apartment(models.Model):
@@ -17,6 +18,7 @@ class Reservation(models.Model):
     number_of_guests = models.PositiveIntegerField()
     code = models.CharField(max_length=8, unique=True, editable=False, null=True)
     reservation_link = models.URLField(max_length=200, null=True, blank=True)  # New field to store the link
+    terms_agreed = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.code:
@@ -61,4 +63,10 @@ class Guest(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.reservation.code})"
 
+class Policies(models.Model):
+    title = models.CharField(max_length=255)
+    content = HTMLField()
+    active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.title

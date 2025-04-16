@@ -1,20 +1,25 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Reservation, Guest
-from .forms import GuestInfoForm
+from .forms import GuestInfoForm, TermsAgreementForm
 from django.forms import formset_factory
+from admin_interface.models import Theme
+
 
 def guest_info_view(request, code):
     reservation = get_object_or_404(Reservation, code=code.upper())
     max_guests = reservation.number_of_guests  # Number of guests for this reservation
+    theme = Theme.objects.filter(active=True).first()
 
     # Create a formset factory for the number of guests
-    GuestFormSet = formset_factory(GuestInfoForm, extra=0)  # We will not use `extra` because we want exactly max_guests forms
+    GuestFormSet = formset_factory(GuestInfoForm,
+                                   extra=0)  # We will not use `extra` because we want exactly max_guests forms
+    terms_form = TermsAgreementForm(request.POST or None)  # Initialize the terms form
 
     if request.method == 'POST':
         formset = GuestFormSet(request.POST)
 
         # Check if the formset is valid and that all forms in the formset are valid
-        if formset.is_valid():
+        if formset.is_valid() and terms_form.is_valid():
             # Iterate through the valid formset and save the data
             for form in formset:
                 guest_data = form.cleaned_data
@@ -31,13 +36,21 @@ def guest_info_view(request, code):
                         document_type=guest_data['document_type'],
                         document_number=guest_data['document_number']
                     )
+
+            # After saving guest data, save the terms agreement to the reservation
+            reservation.terms_agreed = terms_form.cleaned_data['terms_agreed']
+            reservation.save()
+
+            # Redirect to success page
             return redirect('guest_info_success', code=reservation.code)
 
         else:
-            # If the formset is invalid, pass the errors back to the template
+            # If the formset or terms form is invalid, pass the errors back to the template
             return render(request, 'bookings/guest_info.html', {
                 'reservation': reservation,
                 'formset': formset,
+                'terms_form': terms_form,  # Pass the terms form as well for re-rendering
+                'theme': theme,
             })
 
     else:
@@ -47,6 +60,8 @@ def guest_info_view(request, code):
     return render(request, 'bookings/guest_info.html', {
         'reservation': reservation,
         'formset': formset,
+        'terms_form': terms_form,  # Pass the terms form to the template
+        'theme': theme,
     })
 
 def guest_info_success_view(request, code):

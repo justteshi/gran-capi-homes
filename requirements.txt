@@ -4,6 +4,7 @@ Django==4.2.20
 django-admin-interface==0.30.0
 django-colorfield==0.13.0
 django-countries==7.6.1
+django-tinymce==4.1.0
 pillow==11.2.1
 psycopg2-binary==2.9.10
 python-slugify==8.0.4
