@@ -28,6 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['grancapihomes.commitandpray.com']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://grancapihomes.commitandpray.com',
+    # 'https://www.yourdomain.com',
+]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
