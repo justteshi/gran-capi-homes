@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-z8vu0)e^7xiixcm@ao_2epcaze@h99=ax2-&06pl$h76^72!0a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['grancapihomes.commitandpray.com']
+ALLOWED_HOSTS = ['grancapitalhomes.commitandpray.com', 'localhost']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://grancapihomes.commitandpray.com',
