@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project code
-COPY . .
+COPY app/ .
 
 # Run server (overridden during development)
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
