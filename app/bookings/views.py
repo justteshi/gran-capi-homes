@@ -68,4 +68,17 @@ def guest_info_success_view(request, code):
     reservation = get_object_or_404(Reservation, code=code.upper())
     return render(request, 'bookings/guest_info_success.html', {'reservation': reservation})
 
+def home_view(request):
+    theme = Theme.objects.filter(active=True).first()
+    return render(request, 'home.html', {'theme': theme})
+
+def check_reservation(request):
+    code = request.GET.get('code', '').strip()
+    theme = Theme.objects.filter(active=True).first()
+
+    try:
+        reservation = Reservation.objects.get(code=code)
+        return redirect(reservation.get_absolute_url())
+    except Reservation.DoesNotExist:
+        return render(request, 'home.html', {'error': 'Reservation code not found.', 'theme': theme})
 

@@ -31,6 +31,9 @@ class Reservation(models.Model):
     def __str__(self):
         return f"{self.code} | {self.apartment.title} ({self.check_in.date()} - {self.check_out.date()})"
 
+    def get_absolute_url(self):
+        return reverse('guest-info', kwargs={'code': self.code})
+
 
 class Guest(models.Model):
     SEX_CHOICES = [
@@ -63,10 +66,13 @@ class Guest(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.reservation.code})"
 
-class Policies(models.Model):
+class Policy(models.Model):
     title = models.CharField(max_length=255)
     content = HTMLField()
     active = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = 'Policy'  # Singular form
+        verbose_name_plural = 'Policies'
     def __str__(self):
         return self.title

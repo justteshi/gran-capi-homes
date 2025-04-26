@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Apartment, Reservation, Guest, Policies
+from .models import Apartment, Reservation, Guest, Policy
 from django.utils.html import format_html
 from django.urls import reverse
 
@@ -59,7 +59,7 @@ class GuestAdmin(admin.ModelAdmin):
     list_filter = ('reservation', 'first_name')
 
 
-class PoliciesAdmin(admin.ModelAdmin):
+class PolicyAdmin(admin.ModelAdmin):
     list_display = ('title', 'active')
     readonly_fields = ('preview',)
 
@@ -69,6 +69,6 @@ class PoliciesAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Guest, GuestAdmin)
-admin.site.register(Policies, PoliciesAdmin)
+admin.site.register(Policy, PolicyAdmin)
 admin.site.register(Apartment, ApartmentAdmin)
 admin.site.register(Reservation, ReservationAdmin)
